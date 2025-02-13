@@ -1,0 +1,57 @@
+import openai
+
+def call_chatgpt(prompt, model="gpt-4o",  api_key="<YOUR_KEY>"):
+    try:
+        openai.api_key = api_key
+        response = openai.ChatCompletion.create(
+            model=model,
+            messages=[
+         {"role": "system", "content": """Task
+Extract a dog's name from social media posts/tweets. Return the identified name in JSON format.
+Rules for Identification
+
+If a single capitalized word appears in the text, it's likely the dog's name
+Names often appear in context of personal/possessive references
+Names can be in any case (uppercase, lowercase, or mixed)
+
+Examples
+Input: "lol my dog MARIO go go go"
+Output: {"dog_name": "MARIO"}
+Input: "Here is my dog name and pic VINE"
+Output: {"dog_name": "VINE"}
+Input: "Well this is me with my dog SHINTA"
+Output: {"dog_name": "SHINTA"}
+Input: "Cleo and me"
+Output: {"dog_name": "Cleo"}
+Input: "after lot of requests here we are both together. love you Buzzy"
+Output: {"dog_name": "Buzzy"}
+Input: "my world Buzzy"
+Output: {"dog_name": "Buzzy"}
+Input: "here is my family and my oreo"
+Output: {"dog_name": "oreo"}
+Input: "i dont know why you need it for meme or what but posting boba with me"
+Output: {"dog_name": "boba"}
+Output Format
+{
+"dog_name": "<extracted_name>"
+}
+in the output dont mention json
+If no name is found:
+{
+"dog_name": null
+} """}
+
+         ,
+                {"role": "user", "content": prompt}
+            ],
+            temperature=0.7
+        )
+        return response["choices"][0]["message"]["content"].strip()
+    except Exception as e:
+        return f"An error occurred: {e}"
+
+# Step 3: Test the function
+api_key = "<API KEY>"  # Replace with your OpenAI API key
+prompt = " timmy"
+response = call_chatgpt(prompt, api_key=api_key)
+print("Assistant Response:", response)
